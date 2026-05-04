@@ -1,11 +1,112 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio</title>
-</head>
-<body>
-    <h1>Inicio</h1>
-</body>
-</html>
+{% extends "layout.html" %} 
+{% block title %}Inicio{% endblock %}
+{% block container %}
+
+<nav
+  class="bg-gradient-to-r from-[#1a1a1a] to-[#2a2a2a] px-4 sm:px-6 py-0 mb-6 relative shadow-lg h-16 flex items-center"
+  style="border-bottom: 3px solid #ef4444;">
+  <div class="container flex flex-wrap items-center justify-between mx-auto">
+    <div class="flex-1 flex justify-center">
+      <div class="flex items-center space-x-2 sm:space-x-3 bg-opacity-20 px-3 sm:px-6 py-2 rounded-full">
+        <span class="text-base sm:text-2xl font-bold text-white tracking-wider">Bienvenido a</span>
+        <span class="text-base sm:text-2xl font-bold tracking-wider whitespace-nowrap"
+          style="color: #ef4444;">BloodLine Fit</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mx-auto px-4 sm:px-6 max-w-6xl">
+
+  <!-- Tarjeta de bienvenida principal -->
+  <div class="bg-white rounded-2xl shadow-xl overflow-hidden mb-8">
+    <div class="relative">
+      <div class="absolute top-0 left-0 w-full h-2" style="background-color: #ef4444;"></div>
+      <div class="p-8 sm:p-10 text-center">
+        <div class="w-24 h-24 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-5 shadow-lg">
+          <svg class="w-12 h-12" style="color: #ef4444;" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl sm:text-4xl font-bold mb-3" style="color: #1a1a1a;">¡Hola, {{ usuario_nombre or 'Administrador' }}!</h1>
+        <p class="text-gray-500 text-lg mb-2">Bienvenido al sistema de gestión de BloodLine Fit</p>
+        <div class="w-24 h-1 mx-auto my-4 rounded-full" style="background-color: #ef4444;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Acciones rápidas -->
+  <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-8">
+    <div class="px-5 py-4" style="background-color: #1a1a1a;">
+      <h2 class="text-sm font-bold text-white tracking-wide uppercase">Accesos Directos</h2>
+    </div>
+    <div class="p-5">
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <a href="/productos" class="group text-center p-4 rounded-xl transition-all duration-300 hover:bg-red-50">
+          <div class="w-14 h-14 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-2 group-hover:bg-red-200 transition">
+            <svg class="w-7 h-7" style="color: #ef4444;" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+            </svg>
+          </div>
+          <span class="text-sm font-semibold text-gray-700 group-hover:text-red-600 transition">Productos</span>
+        </a>
+
+        <a href="/categorias" class="group text-center p-4 rounded-xl transition-all duration-300 hover:bg-red-50">
+          <div class="w-14 h-14 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-2 group-hover:bg-red-200 transition">
+            <svg class="w-7 h-7" style="color: #ef4444;" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l5 5a2 2 0 01.586 1.414V19a2 2 0 01-2 2H7a2 2 0 01-2-2V5a2 2 0 012-2z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-semibold text-gray-700 group-hover:text-red-600 transition">Categorías</span>
+        </a>
+
+        <a href="/clientes" class="group text-center p-4 rounded-xl transition-all duration-300 hover:bg-red-50">
+          <div class="w-14 h-14 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-2 group-hover:bg-red-200 transition">
+            <svg class="w-7 h-7" style="color: #ef4444;" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-semibold text-gray-700 group-hover:text-red-600 transition">Clientes</span>
+        </a>
+
+        <a href="/pedidos/nuevo" class="group text-center p-4 rounded-xl transition-all duration-300 hover:bg-red-50">
+          <div class="w-14 h-14 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-2 group-hover:bg-red-200 transition">
+            <svg class="w-7 h-7" style="color: #ef4444;" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+            </svg>
+          </div>
+          <span class="text-sm font-semibold text-gray-700 group-hover:text-red-600 transition">Nuevo Pedido</span>
+        </a>
+
+        <a href="/usuarios" class="group text-center p-4 rounded-xl transition-all duration-300 hover:bg-red-50">
+          <div class="w-14 h-14 mx-auto rounded-full bg-red-100 flex items-center justify-center mb-2 group-hover:bg-red-200 transition">
+            <svg class="w-7 h-7" style="color: #ef4444;" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 6v4m0 4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"/>
+            </svg>
+          </div>
+          <span class="text-sm font-semibold text-gray-700 group-hover:text-red-600 transition">Usuarios</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<style>
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .bg-white {
+    animation: fadeIn 0.5s ease-out;
+  }
+</style>
+
+{% endblock %}

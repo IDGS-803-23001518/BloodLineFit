@@ -1,0 +1,425 @@
+{% extends "layout.html" %}
+
+{% block title %}Categorías{% endblock %}
+
+{% block container %}
+
+<nav
+  class="bg-gradient-to-r from-[#1a1a1a] to-[#2a2a2a] px-4 sm:px-6 py-0 mb-6 relative shadow-lg h-16 flex items-center"
+  style="border-bottom: 3px solid #ef4444;">
+  <div class="container flex flex-wrap items-center justify-between mx-auto">
+    <div class="flex-1 flex justify-center">
+      <div class="flex items-center space-x-2 sm:space-x-3 bg-opacity-20 px-3 sm:px-6 py-2 rounded-full">
+        <span class="text-base sm:text-2xl font-bold text-white tracking-wider">Gestión de</span>
+        <span class="text-base sm:text-2xl font-bold tracking-wider whitespace-nowrap"
+          style="color: #ef4444;">Categorías</span>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container mx-auto px-4 sm:px-6 max-w-7xl">
+
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="mb-4 space-y-2">
+    {% for category, message in messages %}
+    <div class="px-4 py-3 rounded-xl text-sm font-semibold shadow-md
+            {% if category == 'success' %}bg-green-100 text-green-700 border border-green-300
+            {% else %}bg-red-100 text-red-700 border border-red-300{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
+  <div class="flex justify-end mb-4">
+    <button onclick="abrirModal('modalRegistro')"
+      class="text-white font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-md transition-all duration-300 hover:brightness-110 hover:shadow-lg text-sm sm:text-base"
+      style="background-color: #ef4444;">
+      Registrar Categoría
+    </button>
+  </div>
+
+  <!-- Filtros -->
+  <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
+    <div class="px-4 sm:px-5 py-3 rounded-t-2xl" style="background-color: #1a1a1a;">
+      <h2 class="text-sm sm:text-base font-bold text-white tracking-wide">FILTROS DE BÚSQUEDA</h2>
+    </div>
+    <form method="GET" action="{{ url_for('categorias.listado_categorias') }}" id="categoriasFiltrosForm"
+      class="flex flex-wrap gap-3 sm:gap-4 items-end p-4 sm:p-5">
+      <div class="flex flex-col flex-1 min-w-[140px]">
+        <label class="text-xs sm:text-sm font-semibold text-gray-700 mb-1">Nombre</label>
+        <input id="filtroNombre" type="text" name="nombre" value="{{ filtros.nombre }}" placeholder="Ingresa el nombre..."
+          class="border border-gray-300 rounded-lg px-3 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+      </div>
+      <div class="flex flex-col min-w-[120px]">
+        <label class="text-xs sm:text-sm font-semibold text-gray-700 mb-1">Estatus</label>
+        <select id="filtroEstatus" name="estatus"
+          class="border border-gray-300 rounded-lg px-3 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+          <option value="todos" {% if filtros.estatus == 'todos' %}selected{% endif %}>Todos</option>
+          <option value="1"     {% if filtros.estatus == '1' %}selected{% endif %}>Activo</option>
+          <option value="0"     {% if filtros.estatus == '0' %}selected{% endif %}>Inactivo</option>
+        </select>
+      </div>
+      <div class="flex flex-col justify-end">
+        <button type="submit"
+          class="text-white font-semibold px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg shadow transition-all duration-300 hover:brightness-110 text-xs sm:text-sm"
+          style="background-color: #ef4444;">
+          Filtrar
+        </button>
+      </div>
+      <div class="flex flex-col justify-end">
+        <a href="{{ url_for('categorias.listado_categorias') }}"
+          class="text-white font-semibold px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg shadow transition-all duration-300 hover:brightness-110 text-xs sm:text-sm text-center"
+          style="background-color: #6b7280;">
+          Limpiar
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <!-- Grid de cards -->
+  <div id="categoriasGrid"
+    class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 mb-6 {% if not categorias %}hidden{% endif %}">
+    {% for c in categorias %}
+    <article
+      class="categoria-card bg-white rounded-2xl overflow-hidden shadow-md transition-all duration-200 hover:-translate-y-1 hover:shadow-xl"
+      data-id="{{ c.id_categoria }}"
+      data-nombre="{{ c.nombre }}"
+      data-estatus="{{ 1 if c.activo == 1 else 0 }}"
+      style="animation: fadeUp .35s ease both; animation-delay: {{ loop.index0 * 0.05 }}s">
+
+      <div class="px-4 py-2.5 text-center" style="background-color: #1a1a1a;">
+        <span class="text-xs font-bold text-white tracking-widest uppercase">Categoría</span>
+      </div>
+
+      <div class="p-4 flex flex-col items-center">
+        <div class="mb-3 flex items-center justify-center">
+          <div class="w-24 h-24 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center text-3xl font-black"
+               style="color:#1a1a1a;">{{ c.nombre[:2]|upper }}</div>
+        </div>
+
+        <h3 class="text-base font-black mb-2 text-left w-full" style="color:#1a1a1a;">{{ c.nombre }}</h3>
+
+        <div class="flex items-center gap-1.5 w-full mb-3">
+          <span class="w-2.5 h-2.5 rounded-full inline-block flex-shrink-0
+            {% if c.activo == 1 %}bg-green-500{% else %}bg-red-500{% endif %}"></span>
+          <span class="text-sm font-bold categoria-estatus-texto
+            {% if c.activo == 1 %}text-green-600{% else %}text-red-500{% endif %}">
+            {{ 'Activo' if c.activo == 1 else 'Inactivo' }}
+          </span>
+        </div>
+
+        <div class="flex gap-2 w-full justify-center">
+          <!-- Editar -->
+          <button type="button" onclick="abrirEditar(this.closest('.categoria-card'))"
+            class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-white transition-all duration-200 hover:scale-110 hover:shadow-md"
+            style="background-color:#ef4444;" title="Editar">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+          </button>
+          <!-- Activar / Desactivar -->
+          <button type="button"
+            onclick="confirmarCambioEstatusDesdeCard(event, this.closest('.categoria-card'))"
+            class="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-lg text-white transition-all duration-200 hover:scale-110 hover:shadow-md"
+            style="background-color:{% if c.activo == 1 %}#e53e3e{% else %}#48bb78{% endif %};"
+            title="{% if c.activo == 1 %}Desactivar{% else %}Activar{% endif %}">
+            {% if c.activo == 1 %}
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6"/>
+            </svg>
+            {% else %}
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5v14"/>
+            </svg>
+            {% endif %}
+          </button>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+  <div id="emptyStateCategorias"
+    class="text-center py-16 text-gray-400 text-sm font-semibold bg-white rounded-2xl shadow-md border-2 border-dashed border-red-200 mb-6 {% if categorias %}hidden{% endif %}">
+    No se encontraron categorías con esos filtros.
+  </div>
+
+</div>
+
+<style>
+  @keyframes fadeUp {
+    from { opacity:0; transform:translateY(14px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+</style>
+
+<!-- ═══════════════════════════ MODAL REGISTRO ═══════════════════════════ -->
+<div id="modalRegistro" tabindex="-1"
+  class="hidden fixed inset-0 z-50 overflow-y-auto"
+  style="background-color:rgba(0,0,0,0.3);">
+  <div class="flex min-h-full items-start justify-center p-4 pt-6">
+  <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full mx-auto my-8 overflow-hidden">
+    <div class="flex justify-between items-center px-6 py-4" style="background-color:#1a1a1a;">
+      <h3 class="text-base font-bold text-white tracking-wide">REGISTRAR CATEGORÍA</h3>
+      <button type="button" onclick="cerrarModal('modalRegistro')" class="text-white hover:text-gray-300 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <form method="POST" action="{{ url_for('categorias.registrar_categoria') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div id="error-registro" class="hidden mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm"></div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre <span class="text-red-500">*</span></label>
+          <input name="nombre" required maxlength="100" placeholder="Ej: Bebidas"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+        </div>
+
+        <div class="flex gap-3">
+          <button type="button" onclick="cerrarModal('modalRegistro')"
+            class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="flex-1 px-4 py-2 rounded-lg text-white font-semibold transition hover:brightness-110"
+            style="background-color:#ef4444;">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL EDICIÓN ═══════════════════════════ -->
+<div id="modalEditar" tabindex="-1"
+  class="hidden fixed inset-0 z-50 overflow-y-auto"
+  style="background-color:rgba(0,0,0,0.3);">
+  <div class="flex min-h-full items-start justify-center p-4 pt-6">
+  <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full mx-auto my-8 overflow-hidden">
+    <div class="flex justify-between items-center px-6 py-4" style="background-color:#1a1a1a;">
+      <h3 class="text-base font-bold text-white tracking-wide">EDITAR CATEGORÍA</h3>
+      <button type="button" onclick="cerrarModal('modalEditar')" class="text-white hover:text-gray-300 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+    </div>
+    <div class="p-6">
+      <form method="POST" id="formEditar">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+        <div id="error-edicion" class="hidden mb-4 p-3 rounded-lg bg-red-100 text-red-700 text-sm"></div>
+
+        <div class="mb-4">
+          <label class="block text-sm font-semibold text-gray-700 mb-2">Nombre <span class="text-red-500">*</span></label>
+          <input id="editNombre" name="nombre" required maxlength="100"
+            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+        </div>
+
+        <div class="mb-5 rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p class="text-sm font-semibold text-gray-700">Estatus actual</p>
+              <div class="mt-1 flex items-center gap-2">
+                <span id="editEstatusDot" class="w-2.5 h-2.5 rounded-full bg-green-500"></span>
+                <span id="editEstatusTexto" class="text-sm font-bold text-green-600">Activo</span>
+              </div>
+            </div>
+            <button type="button" id="editToggleBtn" onclick="confirmarCambioEstatusDesdeModal(event)"
+              class="px-4 py-2 rounded-lg text-white font-semibold transition hover:brightness-110"
+              style="background-color:#e53e3e;">
+              Desactivar categoria
+            </button>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <button type="button" onclick="cerrarModal('modalEditar')"
+            class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition">
+            Cancelar
+          </button>
+          <button type="submit"
+            class="flex-1 px-4 py-2 rounded-lg text-white font-semibold transition hover:brightness-110"
+            style="background-color:#ef4444;">
+            Actualizar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════ MODAL CONFIRMACIÓN ═══════════════════════════ -->
+<div id="modalConfirm" class="hidden fixed inset-0 z-50 flex items-center justify-center"
+  style="background-color:rgba(0,0,0,0.3);">
+  <div class="bg-white rounded-2xl shadow-xl p-5 w-72 text-center">
+    <div class="flex justify-center mb-3">
+      <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
+        <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+      </div>
+    </div>
+    <h3 class="text-base font-bold text-gray-800 mb-1">Confirmar acción</h3>
+    <p id="confirmMensaje" class="text-sm text-gray-500 mb-5"></p>
+    <div class="flex gap-2">
+      <button type="button" onclick="cerrarModal('modalConfirm')"
+        class="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-sm font-semibold hover:bg-gray-100 transition">
+        Cancelar
+      </button>
+      <a id="confirmBtn" href="#"
+        class="flex-1 px-3 py-2 rounded-lg text-white text-sm font-semibold transition hover:brightness-110 text-center"
+        style="background-color:#ef4444;">
+        Confirmar
+      </a>
+    </div>
+  </div>
+</div>
+
+<script>
+  const editarCategoriaBase = "{{ url_for('categorias.editar_categoria', id_categoria=0) }}";
+  const cambiarEstatusCategoriaBase = "{{ url_for('categorias.cambiar_estatus_categoria', id_categoria=0, estatus_actual=0) }}";
+  const categoriaCards = Array.from(document.querySelectorAll('.categoria-card'));
+  const categoriasGrid = document.getElementById('categoriasGrid');
+  const emptyStateCategorias = document.getElementById('emptyStateCategorias');
+  const filtroNombreInput = document.getElementById('filtroNombre');
+  const filtroEstatusSelect = document.getElementById('filtroEstatus');
+  const categoriasFiltrosForm = document.getElementById('categoriasFiltrosForm');
+  // ── Helpers modales ──────────────────────────────────────────────────────────
+  function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
+  function cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+  ['modalConfirm', 'modalRegistro', 'modalEditar'].forEach(id => {
+    const modal = document.getElementById(id);
+    if (!modal) return;
+
+    modal.addEventListener('click', e => {
+      if (e.target === modal) cerrarModal(id);
+    });
+  });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') ['modalConfirm','modalRegistro','modalEditar'].forEach(cerrarModal); });
+
+  // ── Abrir modal Editar ───────────────────────────────────────────────────────
+  function actualizarEstatusModal(estatus) {
+    const esActivo = String(estatus) === '1';
+    const dot = document.getElementById('editEstatusDot');
+    const texto = document.getElementById('editEstatusTexto');
+    const toggleBtn = document.getElementById('editToggleBtn');
+
+    dot.className = `w-2.5 h-2.5 rounded-full ${esActivo ? 'bg-green-500' : 'bg-red-500'}`;
+    texto.textContent = esActivo ? 'Activo' : 'Inactivo';
+    texto.className = `text-sm font-bold ${esActivo ? 'text-green-600' : 'text-red-500'}`;
+    toggleBtn.textContent = esActivo ? 'Desactivar categoria' : 'Activar categoria';
+    toggleBtn.style.backgroundColor = esActivo ? '#e53e3e' : '#48bb78';
+  }
+
+  function abrirEditar(card) {
+    const toggleBtn = document.getElementById('editToggleBtn');
+
+    document.getElementById('editNombre').value = card.dataset.nombre || '';
+    document.getElementById('formEditar').action = editarCategoriaBase.replace('/0', `/${card.dataset.id}`);
+    toggleBtn.dataset.id = card.dataset.id;
+    toggleBtn.dataset.nombre = card.dataset.nombre || '';
+    toggleBtn.dataset.estatus = card.dataset.estatus || '0';
+    actualizarEstatusModal(card.dataset.estatus || '0');
+    document.getElementById('error-edicion').classList.add('hidden');
+    abrirModal('modalEditar');
+  }
+
+  // ── Confirmar cambio de estatus ──────────────────────────────────────────────
+  function confirmarCambioEstatusDesdeCard(e, card) {
+    confirmarCambioEstatus(e, card.dataset.id, card.dataset.nombre || '', card.dataset.estatus || '0');
+  }
+
+  function confirmarCambioEstatusDesdeModal(e) {
+    const toggleBtn = document.getElementById('editToggleBtn');
+
+    confirmarCambioEstatus(
+      e,
+      toggleBtn.dataset.id,
+      toggleBtn.dataset.nombre || '',
+      toggleBtn.dataset.estatus || '0'
+    );
+  }
+
+  function confirmarCambioEstatus(e, id, nombre, estatus) {
+    e.preventDefault();
+    const btn = document.getElementById('confirmBtn');
+    const esActivo = String(estatus) === '1';
+
+    if (esActivo) {
+      document.getElementById('confirmMensaje').textContent = `¿Estás seguro de desactivar "${nombre}"? Podrás volver a activarlo después.`;
+      btn.textContent = 'Desactivar';
+      btn.style.backgroundColor = '#e53e3e';
+    } else {
+      document.getElementById('confirmMensaje').textContent = `¿Estás seguro de activar nuevamente "${nombre}"?`;
+      btn.textContent = 'Activar';
+      btn.style.backgroundColor = '#48bb78';
+    }
+    btn.href = cambiarEstatusCategoriaBase.replace('/0/0', `/${id}/${estatus}`);
+    abrirModal('modalConfirm');
+  }
+
+  function actualizarUrlFiltros(nombre, estatus) {
+    const params = new URLSearchParams(window.location.search);
+
+    if (nombre) {
+      params.set('nombre', nombre);
+    } else {
+      params.delete('nombre');
+    }
+
+    if (estatus && estatus !== 'todos') {
+      params.set('estatus', estatus);
+    } else {
+      params.delete('estatus');
+    }
+
+    const query = params.toString();
+    const nuevaUrl = query ? `${window.location.pathname}?${query}` : window.location.pathname;
+    window.history.replaceState({}, '', nuevaUrl);
+  }
+
+  function aplicarFiltrosEnVivo() {
+    const nombre = (filtroNombreInput?.value || '').trim().toLowerCase();
+    const estatus = filtroEstatusSelect?.value || 'todos';
+    let visibles = 0;
+
+    categoriaCards.forEach(card => {
+      const coincideNombre = !nombre || (card.dataset.nombre || '').toLowerCase().includes(nombre);
+      const coincideEstatus = estatus === 'todos' || (card.dataset.estatus || '') === estatus;
+      const mostrar = coincideNombre && coincideEstatus;
+
+      card.classList.toggle('hidden', !mostrar);
+      if (mostrar) visibles += 1;
+    });
+
+    categoriasGrid?.classList.toggle('hidden', visibles === 0);
+    emptyStateCategorias?.classList.toggle('hidden', visibles !== 0);
+    actualizarUrlFiltros(nombre, estatus);
+  }
+
+  categoriasFiltrosForm?.addEventListener('submit', e => {
+    e.preventDefault();
+    aplicarFiltrosEnVivo();
+  });
+
+  filtroNombreInput?.addEventListener('input', aplicarFiltrosEnVivo);
+  filtroEstatusSelect?.addEventListener('change', aplicarFiltrosEnVivo);
+
+  aplicarFiltrosEnVivo();
+</script>
+
+{% endblock %}

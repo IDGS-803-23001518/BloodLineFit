@@ -4,6 +4,7 @@ from sqlalchemy import create_engine
 from config import DevelopmentConfig
 from models import db
 from routes.productos.routes import productos
+from routes.clientes.routes import clientes
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -16,6 +17,7 @@ engine = create_engine(app.config['SQLALCHEMY_DATABASE_URI'])
 app.config['DB_ENGINE'] = engine
 csrf = CSRFProtect(app)
 app.register_blueprint(productos)
+app.register_blueprint(clientes)
 
 @app.route("/")
 def inicio():

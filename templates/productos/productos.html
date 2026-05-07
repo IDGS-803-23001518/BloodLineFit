@@ -22,7 +22,7 @@
 
   {% with messages = get_flashed_messages(with_categories=true) %}
   {% if messages %}
-  <div class="mb-4 space-y-2">
+  <div id="flash-messages" class="mb-4 space-y-2">
     {% for category, message in messages %}
     <div class="px-4 py-3 rounded-xl text-sm font-semibold shadow-md
             {% if category == 'success' %}bg-green-100 text-green-700 border border-green-300
@@ -474,6 +474,14 @@
     if (e.target === document.getElementById('modalConfirm')) cerrarModal('modalConfirm');
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') ['modalConfirm','modalRegistro','modalEditar','modalVer'].forEach(cerrarModal); });
+
+  document.querySelectorAll('#flash-messages > div').forEach(function(msg) {
+    setTimeout(function() {
+      msg.style.transition = 'opacity 0.5s ease';
+      msg.style.opacity = '0';
+      setTimeout(function() { msg.remove(); }, 500);
+    }, 5000);
+  });
 
   // ── Preview de imagen al seleccionar archivo ─────────────────────────────────
   function setupPreview(inputId, previewWrapperId, previewImgId) {

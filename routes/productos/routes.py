@@ -70,7 +70,7 @@ def index():
     )
 
 
-@productos.route('/registrar', methods=['POST'])
+@productos.route('/productos/registrar', methods=['POST'])
 def registrar():
     nombre = request.form.get('nombre', '').strip()
     descripcion = request.form.get('descripcion', '').strip()

@@ -6,6 +6,7 @@ from models import db
 from routes.productos.routes import productos
 from routes.usuarios.routes import usuarios  
 from routes.clientes.routes import clientes
+from routes.pedidos.routes import pedidos
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -20,6 +21,7 @@ csrf = CSRFProtect(app)
 app.register_blueprint(productos)
 app.register_blueprint(usuarios)  
 app.register_blueprint(clientes)
+app.register_blueprint(pedidos)
 
 @app.route("/")
 def inicio():

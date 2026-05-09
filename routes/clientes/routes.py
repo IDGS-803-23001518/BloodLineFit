@@ -32,7 +32,7 @@ def index():
     elif estatus == '0':
         sql += " AND activo = 0"
 
-    sql += " ORDER BY id_cliente DESC"
+    sql += " ORDER BY activo DESC, id_cliente DESC"
 
     with get_db() as conn:
         clientes_raw = conn.execute(text(sql), params).fetchall()

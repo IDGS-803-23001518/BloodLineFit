@@ -1,0 +1,531 @@
+{% extends "layout.html" %}
+
+{% block title %}Pagos{% endblock %}
+
+{% block container %}
+
+<nav class="bg-gradient-to-r from-[#1a1a1a] to-[#2a2a2a] px-4 sm:px-6 py-0 mb-6 relative shadow-lg h-16 flex items-center"
+    style="border-bottom: 3px solid #ef4444;">
+    <div class="container flex flex-wrap items-center justify-between mx-auto">
+        <div class="flex-1 flex justify-center">
+            <div class="flex items-center space-x-2 sm:space-x-3 bg-opacity-20 px-3 sm:px-6 py-2 rounded-full">
+                <span class="text-base sm:text-2xl font-bold text-white tracking-wider">Gestión de</span>
+                <span class="text-base sm:text-2xl font-bold tracking-wider whitespace-nowrap"
+                    style="color: #ef4444;">Pagos</span>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<div class="container mx-auto px-4 sm:px-6 max-w-7xl">
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div id="flash-messages" class="mb-4 space-y-2">
+        {% for category, message in messages %}
+        <div class="px-4 py-3 rounded-xl text-sm font-semibold shadow-md
+            {% if category == 'success' %}bg-green-100 text-green-700 border border-green-300
+            {% else %}bg-red-100 text-red-700 border border-red-300{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="flex justify-end mb-4">
+        <button onclick="abrirModal('modalRegistro')"
+            class="text-white font-semibold px-4 sm:px-5 py-2 sm:py-2.5 rounded-full shadow-md transition-all duration-300 hover:brightness-110 hover:shadow-lg text-sm sm:text-base"
+            style="background-color: #ef4444;">
+            Nuevo Pago
+        </button>
+    </div>
+
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
+        <div class="px-4 sm:px-5 py-3 rounded-t-2xl" style="background-color: #1a1a1a;">
+            <h2 class="text-sm sm:text-base font-bold text-white tracking-wide">FILTROS DE BÚSQUEDA</h2>
+        </div>
+        <form method="GET" action="{{ url_for('pagos.index') }}"
+            class="flex flex-wrap gap-3 sm:gap-4 items-end p-4 sm:p-5">
+            <div class="flex flex-col min-w-[100px]">
+                <label class="text-xs sm:text-sm font-semibold text-gray-700 mb-1">N° Pedido</label>
+                <input type="number" name="id_pedido" value="{{ filtros.id_pedido }}"
+                    class="border border-gray-300 rounded-lg px-3 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+            </div>
+            <div class="flex flex-col flex-1 min-w-[140px]">
+                <label class="text-xs sm:text-sm font-semibold text-gray-700 mb-1">Cliente</label>
+                <input type="text" name="cliente" value="{{ filtros.cliente }}" placeholder="Nombre del cliente..."
+                    class="border border-gray-300 rounded-lg px-3 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+            </div>
+            <div class="flex flex-col min-w-[140px]">
+                <label class="text-xs sm:text-sm font-semibold text-gray-700 mb-1">Método de pago</label>
+                <select name="metodo"
+                    class="border border-gray-300 rounded-lg px-3 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                    <option value="todos" {% if filtros.metodo == 'todos' %}selected{% endif %}>Todos</option>
+                    <option value="efectivo" {% if filtros.metodo == 'efectivo' %}selected{% endif %}>Efectivo</option>
+                    <option value="tarjeta" {% if filtros.metodo == 'tarjeta' %}selected{% endif %}>Tarjeta</option>
+                    <option value="transferencia" {% if filtros.metodo == 'transferencia' %}selected{% endif %}>Transferencia</option>
+                </select>
+            </div>
+            <div class="flex flex-col min-w-[120px]">
+                <label class="text-xs sm:text-sm font-semibold text-gray-700 mb-1">Fecha inicio</label>
+                <input type="date" name="fecha_inicio" value="{{ filtros.fecha_inicio }}"
+                    class="border border-gray-300 rounded-lg px-3 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+            </div>
+            <div class="flex flex-col min-w-[120px]">
+                <label class="text-xs sm:text-sm font-semibold text-gray-700 mb-1">Fecha fin</label>
+                <input type="date" name="fecha_fin" value="{{ filtros.fecha_fin }}"
+                    class="border border-gray-300 rounded-lg px-3 py-1.5 sm:py-2 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition" />
+            </div>
+            <div class="flex flex-col justify-end">
+                <button type="submit"
+                    class="text-white font-semibold px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg shadow transition-all duration-300 hover:brightness-110 text-xs sm:text-sm"
+                    style="background-color: #ef4444;">
+                    Filtrar
+                </button>
+            </div>
+            <div class="flex flex-col justify-end">
+                <a href="{{ url_for('pagos.index') }}"
+                    class="text-white font-semibold px-4 sm:px-6 py-1.5 sm:py-2 rounded-lg shadow transition-all duration-300 hover:brightness-110 text-xs sm:text-sm text-center"
+                    style="background-color: #6b7280;">
+                    Limpiar
+                </a>
+            </div>
+        </form>
+    </div>
+
+        <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
+        <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+                <thead>
+                    <tr style="background-color:#1a1a1a;">
+                        <th class="px-4 py-3 text-left text-xs font-bold text-white tracking-widest uppercase">Pedido</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-white tracking-widest uppercase">Fecha</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-white tracking-widest uppercase">Cliente</th>
+                        <th class="px-4 py-3 text-right text-xs font-bold text-white tracking-widest uppercase">Monto</th>
+                        <th class="px-4 py-3 text-center text-xs font-bold text-white tracking-widest uppercase">Método</th>
+                        <th class="px-4 py-3 text-center text-xs font-bold text-white tracking-widest uppercase">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if pagos %}
+                    {% for p in pagos %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                        <td class="px-4 py-3 text-gray-500 font-medium">{{ p.id_pedido }}</td>
+                        <td class="px-4 py-3 font-semibold text-gray-800">{{ p.fecha }}</td>
+                        <td class="px-4 py-3 text-gray-600">{{ p.cliente_nombre }}</td>
+                        <td class="px-4 py-3 text-right font-bold text-gray-800">${{ "%.2f"|format(p.monto) }}</td>
+                        <td class="px-4 py-3 text-center">
+                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold
+                                {% if p.metodo_pago == 'efectivo' %}bg-green-100 text-green-700
+                                {% elif p.metodo_pago == 'tarjeta' %}bg-blue-100 text-blue-700
+                                {% else %}bg-purple-100 text-purple-700{% endif %}">
+                                {% if p.metodo_pago == 'efectivo' %} 
+                                {% elif p.metodo_pago == 'tarjeta' %}
+                                {% else %}{% endif %}
+                                {{ p.metodo_pago|capitalize }}
+                            </span>
+                        </td>
+                        <td class="px-4 py-3">
+                            <div class="flex items-center justify-center gap-2">
+                                <button type="button" onclick="abrirVer({{ p.id_pago }})"
+                                    class="flex items-center justify-center w-8 h-8 rounded-lg text-white transition-all duration-200 hover:scale-110 hover:shadow-md"
+                                    style="background-color:#2563eb;" title="Ver detalle">
+                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                                        <path fill-rule="evenodd"
+                                            d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41Z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <button type="button" onclick="abrirEditar({{ p.id_pago }}, '{{ p.metodo_pago }}')"
+                                    class="flex items-center justify-center w-8 h-8 rounded-lg text-white transition-all duration-200 hover:scale-110 hover:shadow-md"
+                                    style="background-color:#d97706;" title="Editar método de pago">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="px-4 py-16 text-center text-gray-400 text-sm font-semibold">
+                            No se encontraron pagos con esos filtros.
+                        </td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<div id="modalRegistro" tabindex="-1" class="hidden fixed inset-0 z-50 overflow-y-auto"
+    style="background-color:rgba(0,0,0,0.3);">
+    <div class="flex min-h-full items-start justify-center p-4 pt-6">
+        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-auto my-8 overflow-hidden">
+            <div class="flex justify-between items-center px-6 py-4" style="background-color:#1a1a1a;">
+                <h3 class="text-base font-bold text-white tracking-wide">NUEVO PAGO</h3>
+                <button type="button" onclick="cerrarModal('modalRegistro')"
+                    class="text-white hover:text-gray-300 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="p-6">
+                <form method="POST" action="{{ url_for('pagos.registrar') }}" id="pagoForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                                        <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Pedido <span class="text-red-500">*</span>
+                        </label>
+                        <select name="id_pedido" id="id_pedido" required onchange="cargarInfoPedido(this.value)"
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
+                            <option value="">Seleccione un pedido pendiente...</option>
+                            {% for ped in pedidos_pendientes %}
+                            <option value="{{ ped.id_pedido }}"
+                                data-total="{{ ped.total }}"
+                                data-cliente="{{ ped.cliente_nombre }}"
+                                data-pagado="{{ ped.total_pagado }}">
+                                #{{ ped.id_pedido }} — {{ ped.cliente_nombre }} — ${{ "%.2f"|format(ped.total) }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                                        <div id="infoPedido" class="hidden mb-4 bg-gray-50 rounded-xl p-3 text-sm space-y-1 border border-gray-200">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Total del pedido:</span>
+                            <span class="font-bold text-gray-800" id="infoTotal">$0.00</span>
+                        </div>
+                    </div>
+
+                                        <div class="mb-4">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        </label>
+                        <input type="number" name="monto" id="monto" step="0.01" min="0.01" required
+                            placeholder="0.00" hidden
+                            class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
+                            oninput="validarMonto()" />
+                        <p id="montoError" class="text-xs text-red-500 mt-1 hidden"></p>
+                    </div>
+
+                                        <div class="mb-6">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                            Método de pago <span class="text-red-500">*</span>
+                        </label>
+                        <div class="grid grid-cols-3 gap-2">
+                            <label class="metodo-btn cursor-pointer">
+                                <input type="radio" name="metodo_pago" value="efectivo" class="sr-only" required>
+                                <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all hover:border-red-400 metodo-label">
+                                    <div class="text-xs font-semibold text-gray-600">Efectivo</div>
+                                </div>
+                            </label>
+                            <label class="metodo-btn cursor-pointer">
+                                <input type="radio" name="metodo_pago" value="tarjeta" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all hover:border-red-400 metodo-label">
+                                    <div class="text-xs font-semibold text-gray-600">Tarjeta</div>
+                                </div>
+                            </label>
+                            <label class="metodo-btn cursor-pointer">
+                                <input type="radio" name="metodo_pago" value="transferencia" class="sr-only">
+                                <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all hover:border-red-400 metodo-label">
+                                    <div class="text-xs font-semibold text-gray-600">Transferencia</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="button" onclick="cerrarModal('modalRegistro')"
+                            class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition">
+                            Cancelar
+                        </button>
+                        <button type="submit" id="btnRegistrar"
+                            class="flex-1 px-4 py-2 rounded-lg text-white font-semibold transition hover:brightness-110"
+                            style="background-color:#ef4444;">
+                            Registrar Pago
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalVer" tabindex="-1" class="hidden fixed inset-0 z-50 flex items-center justify-center overflow-y-auto"
+    style="background-color:rgba(0,0,0,0.3);">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 my-8 overflow-hidden">
+        <div class="flex justify-between items-center px-6 py-4" style="background-color:#1a1a1a;">
+            <h3 class="text-base font-bold text-white tracking-wide">DETALLE DEL PAGO</h3>
+            <button type="button" onclick="cerrarModal('modalVer')" class="text-white hover:text-gray-300 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <div id="detallePago" class="space-y-3 text-sm">
+                <div class="text-center text-gray-400">Cargando...</div>
+            </div>
+            <div class="pt-4 mt-2">
+                <button type="button" onclick="cerrarModal('modalVer')"
+                    class="w-full px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition">
+                    Cerrar
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="modalEditar" tabindex="-1" class="hidden fixed inset-0 z-50 flex items-center justify-center"
+    style="background-color:rgba(0,0,0,0.3);">
+    <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full mx-4 overflow-hidden">
+        <div class="flex justify-between items-center px-6 py-4" style="background-color:#1a1a1a;">
+            <h3 class="text-base font-bold text-white tracking-wide">EDITAR MÉTODO DE PAGO</h3>
+            <button type="button" onclick="cerrarModal('modalEditar')" class="text-white hover:text-gray-300 transition">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <div class="p-6">
+            <form method="POST" action="{{ url_for('pagos.editar') }}" id="editarForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <input type="hidden" name="id_pago" id="editarIdPago">
+                <div class="mb-6">
+                    <label class="block text-sm font-semibold text-gray-700 mb-3">Método de pago</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <label class="metodo-editar-btn cursor-pointer">
+                            <input type="radio" name="metodo_pago" value="efectivo" class="sr-only" required>
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all hover:border-yellow-500 metodo-editar-label">
+                                <div class="text-xs font-semibold text-gray-600">Efectivo</div>
+                            </div>
+                        </label>
+                        <label class="metodo-editar-btn cursor-pointer">
+                            <input type="radio" name="metodo_pago" value="tarjeta" class="sr-only">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all hover:border-yellow-500 metodo-editar-label">
+                                <div class="text-xs font-semibold text-gray-600">Tarjeta</div>
+                            </div>
+                        </label>
+                        <label class="metodo-editar-btn cursor-pointer">
+                            <input type="radio" name="metodo_pago" value="transferencia" class="sr-only">
+                            <div class="border-2 border-gray-200 rounded-xl p-3 text-center transition-all hover:border-yellow-500 metodo-editar-label">
+                                <div class="text-xs font-semibold text-gray-600">Transferencia</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button type="button" onclick="cerrarModal('modalEditar')"
+                        class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition">
+                        Cancelar
+                    </button>
+                    <button type="submit"
+                        class="flex-1 px-4 py-2 rounded-lg text-white font-semibold transition hover:brightness-110"
+                        style="background-color:#d97706;">
+                        Guardar cambio
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+
+    function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    document.addEventListener('keydown', e => {
+        if (e.key === 'Escape') {
+            ['modalRegistro', 'modalVer', 'modalEditar'].forEach(cerrarModal);
+        }
+    });
+
+    ['modalRegistro', 'modalVer', 'modalEditar'].forEach(id => {
+        document.getElementById(id).addEventListener('click', function (e) {
+            if (e.target === this) cerrarModal(id);
+        });
+    });
+
+    document.querySelectorAll('.metodo-btn input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            document.querySelectorAll('.metodo-label').forEach(lbl => {
+                lbl.classList.remove('border-red-500', 'bg-red-50');
+                lbl.classList.add('border-gray-200');
+            });
+            this.closest('.metodo-btn').querySelector('.metodo-label')
+                .classList.add('border-red-500', 'bg-red-50');
+        });
+    });
+
+    function cargarInfoPedido(idPedido) {
+        const select = document.getElementById('id_pedido');
+        const option = select.options[select.selectedIndex];
+        const infoPedido = document.getElementById('infoPedido');
+
+        if (!idPedido) {
+            infoPedido.classList.add('hidden');
+            return;
+        }
+
+        const total = parseFloat(option.dataset.total) || 0;
+        const pagado = parseFloat(option.dataset.pagado) || 0;
+        const saldo = total - pagado;
+
+        document.getElementById('infoTotal').textContent = `$${total.toFixed(2)}`;
+        document.getElementById('infoPagado').textContent = `$${pagado.toFixed(2)}`;
+        document.getElementById('infoSaldo').textContent = `$${saldo.toFixed(2)}`;
+
+        document.getElementById('monto').value = saldo.toFixed(2);
+        document.getElementById('monto').max = saldo.toFixed(2);
+
+        infoPedido.classList.remove('hidden');
+        validarMonto();
+    }
+
+    function validarMonto() {
+        const montoInput = document.getElementById('monto');
+        const errorEl = document.getElementById('montoError');
+        const btnRegistrar = document.getElementById('btnRegistrar');
+        const select = document.getElementById('id_pedido');
+        const option = select.options[select.selectedIndex];
+
+        if (!select.value) return;
+
+        const total = parseFloat(option.dataset.total) || 0;
+        const pagado = parseFloat(option.dataset.pagado) || 0;
+        const saldo = total - pagado;
+        const monto = parseFloat(montoInput.value) || 0;
+
+        if (monto <= 0) {
+            errorEl.textContent = 'El monto debe ser mayor a $0.00';
+            errorEl.classList.remove('hidden');
+            btnRegistrar.disabled = true;
+            btnRegistrar.style.opacity = '0.5';
+        } else if (monto > saldo) {
+            errorEl.textContent = `El monto no puede superar el saldo pendiente de $${saldo.toFixed(2)}`;
+            errorEl.classList.remove('hidden');
+            btnRegistrar.disabled = true;
+            btnRegistrar.style.opacity = '0.5';
+        } else {
+            errorEl.classList.add('hidden');
+            btnRegistrar.disabled = false;
+            btnRegistrar.style.opacity = '1';
+        }
+    }
+
+    function abrirVer(idPago) {
+        document.getElementById('detallePago').innerHTML = '<div class="text-center text-gray-400">Cargando...</div>';
+        abrirModal('modalVer');
+
+        fetch(`/pagos/ver/${idPago}`)
+            .then(r => r.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('detallePago').innerHTML =
+                        '<div class="text-center text-red-500">Error al cargar el detalle</div>';
+                    return;
+                }
+
+                const metodoBadge = {
+                    efectivo: 'bg-green-100 text-green-700',
+                    tarjeta: 'bg-blue-100 text-blue-700',
+                    transferencia: 'bg-purple-100 text-purple-700'
+                };
+                const metodoIcon = {
+                    efectivo: '', tarjeta: '', transferencia: ''
+                };
+                const m = data.pago.metodo_pago;
+
+                document.getElementById('detallePago').innerHTML = `
+                  
+                    <div class="border-b border-gray-200 pb-2 flex justify-between">
+                        <span class="text-gray-500">Fecha:</span>
+                        <span class="font-semibold">${data.pago.fecha}</span>
+                    </div>
+                    <div class="border-b border-gray-200 pb-2 flex justify-between">
+                        <span class="text-gray-500">Pedido:</span>
+                        <span class="font-semibold">#${data.pago.id_pedido}</span>
+                    </div>
+                    <div class="border-b border-gray-200 pb-2 flex justify-between">
+                        <span class="text-gray-500">Cliente:</span>
+                        <span class="font-semibold">${data.pago.cliente_nombre}</span>
+                    </div>
+                    <div class="border-b border-gray-200 pb-2 flex justify-between">
+                        <span class="text-gray-500">Monto pagado:</span>
+                        <span class="font-bold text-lg" style="color:#ef4444;">$${parseFloat(data.pago.monto).toFixed(2)}</span>
+                    </div>
+                    <div class="border-b border-gray-200 pb-2 flex justify-between items-center">
+                        <span class="text-gray-500">Método:</span>
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${metodoBadge[m] || 'bg-gray-100 text-gray-700'}">
+                            ${metodoIcon[m] || ''} ${m.charAt(0).toUpperCase() + m.slice(1)}
+                        </span>
+                    </div>
+                    <div class="pt-2">
+                        <div class="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wide">Resumen del pedido</div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Total del pedido:</span>
+                            <span class="font-semibold">$${parseFloat(data.pedido.total).toFixed(2)}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Total pagado:</span>
+                            <span class="text-green-600 font-semibold">$${parseFloat(data.total_pagado).toFixed(2)}</span>
+                        </div>
+                    
+                    </div>
+                `;
+            })
+            .catch(() => {
+                document.getElementById('detallePago').innerHTML =
+                    '<div class="text-center text-red-500">Error al cargar el detalle</div>';
+            });
+    }
+
+    function abrirEditar(idPago, metodoActual) {
+        document.getElementById('editarIdPago').value = idPago;
+
+        document.querySelectorAll('.metodo-editar-btn input[type="radio"]').forEach(radio => {
+            radio.checked = radio.value === metodoActual;
+        });
+        document.querySelectorAll('.metodo-editar-label').forEach(lbl => {
+            lbl.classList.remove('border-yellow-500', 'bg-yellow-50');
+            lbl.classList.add('border-gray-200');
+        });
+        const selected = document.querySelector(`.metodo-editar-btn input[value="${metodoActual}"]`);
+        if (selected) {
+            selected.closest('.metodo-editar-btn').querySelector('.metodo-editar-label')
+                .classList.add('border-yellow-500', 'bg-yellow-50');
+        }
+
+        abrirModal('modalEditar');
+    }
+
+    document.querySelectorAll('.metodo-editar-btn input[type="radio"]').forEach(radio => {
+        radio.addEventListener('change', function () {
+            document.querySelectorAll('.metodo-editar-label').forEach(lbl => {
+                lbl.classList.remove('border-yellow-500', 'bg-yellow-50');
+                lbl.classList.add('border-gray-200');
+            });
+            this.closest('.metodo-editar-btn').querySelector('.metodo-editar-label')
+                .classList.add('border-yellow-500', 'bg-yellow-50');
+        });
+    });
+
+    document.querySelectorAll('#flash-messages > div').forEach(function (msg) {
+        setTimeout(function () {
+            msg.style.transition = 'opacity 0.5s ease';
+            msg.style.opacity = '0';
+            setTimeout(function () { msg.remove(); }, 500);
+        }, 5000);
+    });
+</script>
+
+{% endblock %}

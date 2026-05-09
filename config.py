@@ -6,5 +6,5 @@ class Config(object):
 
 class DevelopmentConfig(Config):
     DEBUG=True
-    SQLALCHEMY_DATABASE_URI="mysql+pymysql://root:root@127.0.0.1/bloodlinefitDB"
+    SQLALCHEMY_DATABASE_URI="mysql+pymysql://root:5522@127.0.0.1/bloodlinefitDB"
     SQLALCHEMY_TRACK_MODIFICATIONS=False

@@ -41,7 +41,7 @@
         </button>
     </div>
 
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
         <div class="px-4 sm:px-5 py-3 rounded-t-2xl" style="background-color: #1a1a1a;">
             <h2 class="text-sm sm:text-base font-bold text-white tracking-wide">FILTROS DE BÚSQUEDA</h2>
         </div>
@@ -94,7 +94,7 @@
         </form>
     </div>
 
-        <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
+    <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
@@ -120,9 +120,6 @@
                                 {% if p.metodo_pago == 'efectivo' %}bg-green-100 text-green-700
                                 {% elif p.metodo_pago == 'tarjeta' %}bg-blue-100 text-blue-700
                                 {% else %}bg-purple-100 text-purple-700{% endif %}">
-                                {% if p.metodo_pago == 'efectivo' %} 
-                                {% elif p.metodo_pago == 'tarjeta' %}
-                                {% else %}{% endif %}
                                 {{ p.metodo_pago|capitalize }}
                             </span>
                         </td>
@@ -153,7 +150,7 @@
                     {% endfor %}
                     {% else %}
                     <tr>
-                        <td colspan="7" class="px-4 py-16 text-center text-gray-400 text-sm font-semibold">
+                        <td colspan="6" class="px-4 py-16 text-center text-gray-400 text-sm font-semibold">
                             No se encontraron pagos con esos filtros.
                         </td>
                     </tr>
@@ -182,7 +179,7 @@
                 <form method="POST" action="{{ url_for('pagos.registrar') }}" id="pagoForm">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
 
-                                        <div class="mb-4">
+                    <div class="mb-4">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                             Pedido <span class="text-red-500">*</span>
                         </label>
@@ -200,16 +197,23 @@
                         </select>
                     </div>
 
-                                        <div id="infoPedido" class="hidden mb-4 bg-gray-50 rounded-xl p-3 text-sm space-y-1 border border-gray-200">
+                    <div id="infoPedido" class="hidden mb-4 bg-gray-50 rounded-xl p-3 text-sm space-y-1 border border-gray-200">
                         <div class="flex justify-between">
                             <span class="text-gray-500">Total del pedido:</span>
                             <span class="font-bold text-gray-800" id="infoTotal">$0.00</span>
                         </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Total pagado:</span>
+                            <span class="font-bold text-green-600" id="infoPagado">$0.00</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Saldo pendiente:</span>
+                            <span class="font-bold text-red-600" id="infoSaldo">$0.00</span>
+                        </div>
                     </div>
 
-                                        <div class="mb-4">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                        </label>
+                    <div class="mb-4">
+            
                         <input type="number" name="monto" id="monto" step="0.01" min="0.01" required
                             placeholder="0.00" hidden
                             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition"
@@ -217,7 +221,7 @@
                         <p id="montoError" class="text-xs text-red-500 mt-1 hidden"></p>
                     </div>
 
-                                        <div class="mb-6">
+                    <div class="mb-6">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">
                             Método de pago <span class="text-red-500">*</span>
                         </label>
@@ -338,6 +342,7 @@
         </div>
     </div>
 </div>
+
 <script>
 
     function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
@@ -373,6 +378,7 @@
 
         if (!idPedido) {
             infoPedido.classList.add('hidden');
+            document.getElementById('monto').value = '';
             return;
         }
 
@@ -440,13 +446,9 @@
                     tarjeta: 'bg-blue-100 text-blue-700',
                     transferencia: 'bg-purple-100 text-purple-700'
                 };
-                const metodoIcon = {
-                    efectivo: '', tarjeta: '', transferencia: ''
-                };
                 const m = data.pago.metodo_pago;
 
                 document.getElementById('detallePago').innerHTML = `
-                  
                     <div class="border-b border-gray-200 pb-2 flex justify-between">
                         <span class="text-gray-500">Fecha:</span>
                         <span class="font-semibold">${data.pago.fecha}</span>
@@ -466,7 +468,7 @@
                     <div class="border-b border-gray-200 pb-2 flex justify-between items-center">
                         <span class="text-gray-500">Método:</span>
                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold ${metodoBadge[m] || 'bg-gray-100 text-gray-700'}">
-                            ${metodoIcon[m] || ''} ${m.charAt(0).toUpperCase() + m.slice(1)}
+                            ${m.charAt(0).toUpperCase() + m.slice(1)}
                         </span>
                     </div>
                     <div class="pt-2">
@@ -479,7 +481,10 @@
                             <span class="text-gray-500">Total pagado:</span>
                             <span class="text-green-600 font-semibold">$${parseFloat(data.total_pagado).toFixed(2)}</span>
                         </div>
-                    
+                        <div class="flex justify-between text-sm">
+                            <span class="text-gray-500">Saldo pendiente:</span>
+                            <span class="text-red-500 font-semibold">$${parseFloat(data.saldo_pendiente).toFixed(2)}</span>
+                        </div>
                     </div>
                 `;
             })

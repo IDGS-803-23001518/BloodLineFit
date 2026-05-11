@@ -92,7 +92,6 @@
       <table class="min-w-[700px] w-full divide-y divide-gray-200">
         <thead style="background-color: #1a1a1a;">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">ID</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Usuario</th>
             <th class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider">Email</th>
             <th class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Estatus</th>
@@ -105,7 +104,6 @@
               data-nombre-usuario="{{ u.nombre_usuario }}"
               data-email="{{ u.email or '' }}"
               data-estatus="{{ 1 if u.activo == 1 else 0 }}">
-            <td class="px-4 py-3 whitespace-nowrap text-sm font-medium text-gray-900">{{ u.id_usuario }}</td>
             <td class="px-4 py-3 whitespace-nowrap text-sm text-gray-700">{{ u.nombre_usuario }}</td>
             <td class="px-4 py-3 max-w-[200px] truncate text-sm text-gray-500" title="{{ u.email or '-' }}">{{ u.email or '-' }}</td>
             <td class="px-4 py-3 whitespace-nowrap text-center">
@@ -288,8 +286,7 @@
       <div class="p-6">
         <div class="space-y-3 text-sm">
           <div class="flex justify-between border-b border-gray-100 pb-2">
-            <span class="font-semibold text-gray-500">ID</span>
-            <span id="verId" class="font-semibold text-gray-800"></span>
+            <span id="verId" class="font-semibold text-gray-800 hidden"></span>
           </div>
           <div class="flex justify-between border-b border-gray-100 pb-2">
             <span class="font-semibold text-gray-500">Usuario</span>

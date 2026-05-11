@@ -168,7 +168,11 @@
                         alt="BloodLine Fit Logo" />
                 </div>
                 <div>
-                    <span class="block text-base font-bold text-white">BloodLine <span class="text-red-600">Fit</span></span>
+                    <span class="block text-base font-bold text-white">BloodLine <span
+                            class="text-red-600">Fit</span></span>
+                    {% if usuario_actual %}
+                    <span class="block text-xs text-gray-400">{{ usuario_actual.nombre_usuario }}</span>
+                    {% endif %}
                 </div>
             </div>
             <button type="button" id="sidebar-hide-btn"
@@ -235,10 +239,10 @@
                     <a href="/pedidos"
                         class="flex items-center px-3 py-2 text-sm text-gray-200 rounded-xl hover:bg-red-600 hover:bg-opacity-15 hover:text-red-500 group menu-item-hover menu-text">
                         <svg class="shrink-0 w-4 h-4 transition duration-75 group-hover:text-red-500"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-                            </svg>
+                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
                         <span class="ms-3">Pedidos</span>
                     </a>
                 </li>
@@ -259,7 +263,7 @@
                 <div class="sidebar-separator"></div>
 
                 <li>
-                    <a href=""
+                    <a href="{{ url_for('auth.logout') }}"
                         class="flex items-center px-3 py-2 text-sm text-gray-200 rounded-xl hover:bg-red-600 hover:bg-opacity-20 hover:text-red-500 group menu-item-hover menu-text">
                         <svg class="shrink-0 w-4 h-4 transition duration-75 group-hover:text-red-500"
                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

@@ -63,3 +63,8 @@ CREATE TABLE pagos (
     fecha DATE NOT NULL,
     FOREIGN KEY (id_pedido) REFERENCES pedidos(id_pedido)
 );
+
+INSERT INTO usuarios (nombre_usuario, contrasena, email, activo) VALUES
+('adminPrincipal', 'scrypt:32768:8:1$mPf3LwqUSQC2QhZ1$ae79e2afcae76c5edbfdc9e476daeab2f45c4ee9ecdd6fc86313fe71fc16d1029954bf1b6bb280093014341d6e7de332939b984d214df616e13274b56460f2f6', 'admin@bloodlinefit.com', TRUE)
+
+-- contraseña: adminprincipal

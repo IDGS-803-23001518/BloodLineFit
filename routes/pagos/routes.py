@@ -2,9 +2,9 @@ from flask import render_template, request, redirect, url_for, flash, jsonify
 from sqlalchemy import text
 from datetime import datetime
 import locale
+from utils.auth_utils import login_required
 from . import pagos
 
-# Configuración de idioma (si falla en tu sistema, puedes comentar esta línea)
 try:
     locale.setlocale(locale.LC_TIME, 'es_MX.UTF-8')
 except:
@@ -36,6 +36,7 @@ def get_db():
 
 
 @pagos.route('/pagos', methods=['GET'])
+@login_required 
 def index():
     filtroCliente = request.args.get('cliente', '').strip()
     filtroMetodo = request.args.get('metodo', 'todos').strip()
@@ -114,6 +115,7 @@ def index():
 
 
 @pagos.route('/pagos/registrar', methods=['POST'])
+@login_required
 def registrar():
     idPedido = request.form.get('id_pedido', '').strip()
     montoStr = request.form.get('monto', '').strip()
@@ -193,6 +195,7 @@ def registrar():
 
 
 @pagos.route('/pagos/ver/<int:id_pago>')
+@login_required
 def ver(id_pago):
     with get_db() as conn:
         pago = conn.execute(
@@ -234,6 +237,7 @@ def ver(id_pago):
 
 
 @pagos.route('/pagos/eliminar/<int:id_pago>')
+@login_required
 def eliminar(id_pago):
     with get_db() as conn:
         pago = conn.execute(
@@ -277,6 +281,7 @@ def eliminar(id_pago):
 
 
 @pagos.route('/pagos/editar', methods=['POST'])
+@login_required
 def editar():
     idPago = request.form.get('id_pago', '').strip()
     metodoPago = request.form.get('metodo_pago', '').strip()

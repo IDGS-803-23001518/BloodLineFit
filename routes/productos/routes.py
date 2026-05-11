@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash
 from sqlalchemy import text
 import base64
 from . import productos
+from utils.auth_utils import login_required
 
 
 def get_db():
@@ -10,6 +11,7 @@ def get_db():
 
 
 @productos.route('/productos', methods=['GET'])
+@login_required
 def index():
     nombre = request.args.get('nombre', '').strip()
     precio_inicio = request.args.get('precio_inicio', '').strip()
@@ -47,18 +49,20 @@ def index():
 
     with get_db() as conn:
         productos_raw = conn.execute(text(sql), params).fetchall()
-        categorias = conn.execute(text("SELECT id_categoria, nombre FROM categorias WHERE activo = 1 ORDER BY nombre")).fetchall()
+        categorias = conn.execute(
+            text("SELECT id_categoria, nombre FROM categorias WHERE activo = 1 ORDER BY nombre")
+        ).fetchall()
 
-    productos = []
+    productos_list = []
     for p in productos_raw:
         p_dict = dict(p._mapping)
         if p_dict['imagen'] and isinstance(p_dict['imagen'], (bytes, bytearray)):
             p_dict['imagen'] = base64.b64encode(p_dict['imagen']).decode('utf-8')
-        productos.append(p_dict)
+        productos_list.append(p_dict)
 
     return render_template(
         'productos/productos.html',
-        productos=productos,
+        productos=productos_list,
         categorias=categorias,
         filtros={
             'nombre': nombre,
@@ -71,16 +75,21 @@ def index():
 
 
 @productos.route('/productos/registrar', methods=['POST'])
+@login_required
 def registrar():
     nombre = request.form.get('nombre', '').strip()
     descripcion = request.form.get('descripcion', '').strip()
     precio = request.form.get('precio', '').strip()
     stock = request.form.get('stock', '0').strip()
-    id_categoria = request.form.get('id_categoria', None)
+    id_categoria = request.form.get('id_categoria', '').strip()
     imagen_file = request.files.get('imagen')
 
     if not nombre or not precio:
         flash('Nombre y precio son obligatorios.', 'error')
+        return redirect(url_for('productos.index'))
+
+    if not id_categoria:
+        flash('La categoría es obligatoria.', 'error')
         return redirect(url_for('productos.index'))
 
     try:
@@ -94,9 +103,16 @@ def registrar():
     if imagen_file and imagen_file.filename:
         imagen_b64 = base64.b64encode(imagen_file.read()).decode('utf-8')
 
-    id_cat = int(id_categoria) if id_categoria else None
+    id_cat = int(id_categoria)
 
     with get_db() as conn:
+        existe = conn.execute(text(
+            "SELECT 1 FROM productos WHERE LOWER(nombre) = LOWER(:nombre)"
+        ), {'nombre': nombre}).fetchone()
+        if existe:
+            flash(f'Ya existe un producto con el nombre "{nombre}".', 'error')
+            return redirect(url_for('productos.index'))
+
         conn.execute(text("""
             INSERT INTO productos (nombre, descripcion, precio, stock, imagen, id_categoria, activo)
             VALUES (:nombre, :descripcion, :precio, :stock, :imagen, :id_categoria, 1)
@@ -115,16 +131,21 @@ def registrar():
 
 
 @productos.route('/productos/editar/<int:id_producto>', methods=['POST'])
+@login_required
 def editar(id_producto):
     nombre = request.form.get('nombre', '').strip()
     descripcion = request.form.get('descripcion', '').strip()
     precio = request.form.get('precio', '').strip()
     stock = request.form.get('stock', '0').strip()
-    id_categoria = request.form.get('id_categoria', None)
+    id_categoria = request.form.get('id_categoria', '').strip()
     imagen_file = request.files.get('imagen')
 
     if not nombre or not precio:
         flash('Nombre y precio son obligatorios.', 'error')
+        return redirect(url_for('productos.index'))
+
+    if not id_categoria:
+        flash('La categoría es obligatoria.', 'error')
         return redirect(url_for('productos.index'))
 
     try:
@@ -134,9 +155,16 @@ def editar(id_producto):
         flash('Precio o stock inválidos.', 'error')
         return redirect(url_for('productos.index'))
 
-    id_cat = int(id_categoria) if id_categoria else None
+    id_cat = int(id_categoria)
 
     with get_db() as conn:
+        existe = conn.execute(text(
+            "SELECT 1 FROM productos WHERE LOWER(nombre) = LOWER(:nombre) AND id_producto != :id"
+        ), {'nombre': nombre, 'id': id_producto}).fetchone()
+        if existe:
+            flash(f'Ya existe un producto con el nombre "{nombre}".', 'error')
+            return redirect(url_for('productos.index'))
+
         if imagen_file and imagen_file.filename:
             imagen_b64 = base64.b64encode(imagen_file.read()).decode('utf-8')
             conn.execute(text("""
@@ -167,6 +195,7 @@ def editar(id_producto):
 
 
 @productos.route('/productos/estatus/<int:id_producto>/<int:estatus_actual>', methods=['GET'])
+@login_required
 def cambiar_estatus(id_producto, estatus_actual):
     nuevo_estatus = 0 if estatus_actual == 1 else 1
     with get_db() as conn:

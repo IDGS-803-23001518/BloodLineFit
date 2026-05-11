@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, current_app
 from sqlalchemy import text
 from werkzeug.security import generate_password_hash, check_password_hash
+from utils.auth_utils import login_required
 from . import usuarios
 
 
@@ -10,6 +11,7 @@ def get_db():
 
 
 @usuarios.route('/usuarios', methods=['GET'])
+@login_required
 def index():
     nombre_usuario = request.args.get('nombre_usuario', '').strip()
     email = request.args.get('email', '').strip()
@@ -54,6 +56,7 @@ def index():
 
 
 @usuarios.route('/usuarios/registrar', methods=['POST'])
+@login_required
 def registrar():
     nombre_usuario = request.form.get('nombre_usuario', '').strip()
     contrasena = request.form.get('contrasena', '')
@@ -67,7 +70,6 @@ def registrar():
         flash('La contraseña debe tener al menos 6 caracteres.', 'error')
         return redirect(url_for('usuarios.index'))
 
-    # Verificar si el nombre de usuario ya existe
     with get_db() as conn:
         exists = conn.execute(
             text("SELECT id_usuario FROM usuarios WHERE nombre_usuario = :nombre"),
@@ -78,7 +80,6 @@ def registrar():
             flash('El nombre de usuario ya existe. Por favor, elige otro.', 'error')
             return redirect(url_for('usuarios.index'))
 
-        # Hashear la contraseña
         hashed_password = generate_password_hash(contrasena)
 
         conn.execute(text("""
@@ -96,6 +97,7 @@ def registrar():
 
 
 @usuarios.route('/usuarios/editar/<int:id_usuario>', methods=['POST'])
+@login_required
 def editar(id_usuario):
     nombre_usuario = request.form.get('nombre_usuario', '').strip()
     email = request.form.get('email', '').strip() or None
@@ -106,7 +108,6 @@ def editar(id_usuario):
         return redirect(url_for('usuarios.index'))
 
     with get_db() as conn:
-        # Verificar que el nuevo nombre no esté en uso por otro usuario
         exists = conn.execute(
             text("SELECT id_usuario FROM usuarios WHERE nombre_usuario = :nombre AND id_usuario != :id"),
             {'nombre': nombre_usuario, 'id': id_usuario}
@@ -148,6 +149,7 @@ def editar(id_usuario):
 
 
 @usuarios.route('/usuarios/estatus/<int:id_usuario>/<int:estatus_actual>', methods=['GET'])
+@login_required
 def cambiar_estatus(id_usuario, estatus_actual):
     nuevo_estatus = 0 if estatus_actual == 1 else 1
     with get_db() as conn:
@@ -163,6 +165,7 @@ def cambiar_estatus(id_usuario, estatus_actual):
 
 
 @usuarios.route('/usuarios/ver/<int:id_usuario>', methods=['GET'])
+@login_required
 def ver(id_usuario):
     with get_db() as conn:
         usuario = conn.execute(

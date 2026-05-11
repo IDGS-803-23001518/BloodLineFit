@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash
 from sqlalchemy import text
+from utils.auth_utils import login_required
 from . import clientes
 
 
@@ -9,6 +10,7 @@ def get_db():
 
 
 @clientes.route('/clientes', methods=['GET'])
+@login_required
 def index():
     nombre = request.args.get('nombre', '').strip()
     telefono = request.args.get('telefono', '').strip()
@@ -52,6 +54,7 @@ def index():
 
 
 @clientes.route('/clientes/registrar', methods=['POST'])
+@login_required
 def registrar():
     nombre = request.form.get('nombre', '').strip()
     telefono = request.form.get('telefono', '').strip()
@@ -79,6 +82,7 @@ def registrar():
 
 
 @clientes.route('/clientes/editar/<int:id_cliente>', methods=['POST'])
+@login_required
 def editar(id_cliente):
     nombre = request.form.get('nombre', '').strip()
     telefono = request.form.get('telefono', '').strip()
@@ -108,6 +112,7 @@ def editar(id_cliente):
 
 
 @clientes.route('/clientes/estatus/<int:id_cliente>/<int:estatus_actual>', methods=['GET'])
+@login_required
 def cambiar_estatus(id_cliente, estatus_actual):
     nuevo_estatus = 0 if estatus_actual == 1 else 1
     with get_db() as conn:

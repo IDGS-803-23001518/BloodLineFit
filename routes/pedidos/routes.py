@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash, jsonify
 from sqlalchemy import text
 from datetime import date
+from utils.auth_utils import login_required
 from . import pedidos
 
 
@@ -10,6 +11,7 @@ def get_db():
 
 
 @pedidos.route('/pedidos', methods=['GET'])
+@login_required
 def index():
     filtroCliente = request.args.get('cliente', '').strip()
     filtroEstado = request.args.get('estado', 'todos').strip()
@@ -66,6 +68,7 @@ def index():
 
 
 @pedidos.route('/pedidos/nuevo', methods=['GET'])
+@login_required
 def nuevo():
     with get_db() as conn:
         clientes = conn.execute(text("SELECT id_cliente, nombre FROM clientes WHERE activo = 1 ORDER BY nombre")).fetchall()
@@ -75,6 +78,7 @@ def nuevo():
 
 
 @pedidos.route('/pedidos/registrar', methods=['POST'])
+@login_required
 def registrar():
     idCliente = request.form.get('id_cliente', '').strip()
     productosJson = request.form.get('productos', '[]')
@@ -150,6 +154,7 @@ def registrar():
 
 
 @pedidos.route('/pedidos/ver/<int:id_pedido>')
+@login_required
 def ver(id_pedido):
     with get_db() as conn:
         pedido = conn.execute(
@@ -204,6 +209,7 @@ def ver(id_pedido):
 
 
 @pedidos.route('/pedidos/agregarPago', methods=['POST'])
+@login_required
 def agregarPago():
     idPedido = request.form.get('id_pedido', '').strip()
     monto = request.form.get('monto', '').strip()
@@ -265,6 +271,7 @@ def agregarPago():
 
 
 @pedidos.route('/pedidos/cambiarEstado/<int:id_pedido>/<string:estado_actual>', methods=['GET'])
+@login_required
 def cambiarEstado(id_pedido, estado_actual):
     nuevoEstado = 'cancelado' if estado_actual == 'pendiente' else 'pendiente'
     
@@ -293,6 +300,7 @@ def cambiarEstado(id_pedido, estado_actual):
 
 
 @pedidos.route('/pedidos/buscarProductos')
+@login_required
 def buscarProductos():
     search = request.args.get('search', '').strip()
     
@@ -316,6 +324,7 @@ def buscarProductos():
 
 
 @pedidos.route('/pedidos/obtenerCliente/<int:id_cliente>')
+@login_required
 def obtenerCliente(id_cliente):
     with get_db() as conn:
         cliente = conn.execute(
@@ -329,6 +338,7 @@ def obtenerCliente(id_cliente):
 
 
 @pedidos.route('/pedidos/marcarPagado/<int:id_pedido>', methods=['GET'])
+@login_required
 def marcarPagado(id_pedido):
     with get_db() as conn:
         pedido = conn.execute(

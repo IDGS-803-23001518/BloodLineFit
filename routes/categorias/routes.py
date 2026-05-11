@@ -1,5 +1,6 @@
 from flask import flash, redirect, render_template, request, url_for
 from sqlalchemy import text
+from utils.auth_utils import login_required
 
 from . import categorias
 
@@ -10,6 +11,7 @@ def get_db():
 
 
 @categorias.route("/categorias", methods=["GET"])
+@login_required
 def listado_categorias():
     nombre = request.args.get("nombre", "").strip()
     estatus = request.args.get("estatus", "todos").strip()
@@ -40,6 +42,7 @@ def listado_categorias():
 
 
 @categorias.route("/registrar-categoria", methods=["POST"])
+@login_required
 def registrar_categoria():
     nombre = request.form.get("nombre", "").strip()
 
@@ -59,6 +62,7 @@ def registrar_categoria():
 
 
 @categorias.route("/editar-categoria/<int:id_categoria>", methods=["POST"])
+@login_required
 def editar_categoria(id_categoria):
     nombre = request.form.get("nombre", "").strip()
 
@@ -81,6 +85,7 @@ def editar_categoria(id_categoria):
     "/cambiar-estatus-categoria/<int:id_categoria>/<int:estatus_actual>",
     methods=["GET"],
 )
+@login_required
 def cambiar_estatus_categoria(id_categoria, estatus_actual):
     nuevo_estatus = 0 if estatus_actual == 1 else 1
 

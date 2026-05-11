@@ -41,6 +41,7 @@
         </button>
     </div>
 
+    <!-- Filtros -->
     <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
         <div class="px-4 sm:px-5 py-3 rounded-t-2xl" style="background-color: #1a1a1a;">
             <h2 class="text-sm sm:text-base font-bold text-white tracking-wide">FILTROS DE BÚSQUEDA</h2>
@@ -89,22 +90,18 @@
         </form>
     </div>
 
+    <!-- Tabla -->
     <div class="bg-white rounded-2xl shadow-md overflow-hidden mb-6">
         <div class="overflow-x-auto">
             <table class="w-full text-sm">
                 <thead>
                     <tr style="background-color:#1a1a1a;">
                         <th class="px-4 py-3 text-left text-xs font-bold text-white tracking-widest uppercase">#</th>
-                        <th class="px-4 py-3 text-left text-xs font-bold text-white tracking-widest uppercase">Fecha
-                        </th>
-                        <th class="px-4 py-3 text-left text-xs font-bold text-white tracking-widest uppercase">Cliente
-                        </th>
-                        <th class="px-4 py-3 text-right text-xs font-bold text-white tracking-widest uppercase">Total
-                        </th>
-                        <th class="px-4 py-3 text-center text-xs font-bold text-white tracking-widest uppercase">Estado
-                        </th>
-                        <th class="px-4 py-3 text-center text-xs font-bold text-white tracking-widest uppercase">
-                            Acciones</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-white tracking-widest uppercase">Fecha</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-white tracking-widest uppercase">Cliente</th>
+                        <th class="px-4 py-3 text-right text-xs font-bold text-white tracking-widest uppercase">Total</th>
+                        <th class="px-4 py-3 text-center text-xs font-bold text-white tracking-widest uppercase">Estado</th>
+                        <th class="px-4 py-3 text-center text-xs font-bold text-white tracking-widest uppercase">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -118,46 +115,37 @@
                         <td class="px-4 py-3 text-right font-bold text-gray-800">${{ "%.2f"|format(p.total) }}</td>
                         <td class="px-4 py-3 text-center">
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold
-                {% if p.estado == 'pagado' %}bg-green-100 text-green-700
-                {% elif p.estado == 'pendiente' %}bg-yellow-100 text-yellow-700
-                {% else %}bg-red-100 text-red-600{% endif %}">
+                                {% if p.estado == 'pagado' %}bg-green-100 text-green-700
+                                {% elif p.estado == 'pendiente' %}bg-yellow-100 text-yellow-700
+                                {% else %}bg-red-100 text-red-600{% endif %}">
                                 <span class="w-1.5 h-1.5 rounded-full
-                  {% if p.estado == 'pagado' %}bg-green-500
-                  {% elif p.estado == 'pendiente' %}bg-yellow-500
-                  {% else %}bg-red-500{% endif %}"></span>
+                                    {% if p.estado == 'pagado' %}bg-green-500
+                                    {% elif p.estado == 'pendiente' %}bg-yellow-500
+                                    {% else %}bg-red-500{% endif %}"></span>
                                 {{ p.estado|capitalize }}
                             </span>
                         </td>
                         <td class="px-4 py-3">
-                            <div class="flex items-center justify-center gap-2">
+                            <div class="flex items-center justify-center gap-2 flex-wrap">
+                                <!-- Ver detalle: sin icono -->
                                 <button type="button" onclick="abrirVer(this.closest('tr'))"
-                                    class="flex items-center justify-center w-8 h-8 rounded-lg text-white transition-all duration-200 hover:scale-110 hover:shadow-md"
+                                    class="px-3 py-1.5 rounded-lg text-white text-xs font-semibold transition-all duration-200 hover:brightness-110"
                                     style="background-color:#2563eb;" title="Ver detalle">
-                                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                                        <path fill-rule="evenodd"
-                                            d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41Z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                                    Ver
                                 </button>
                                 {% if p.estado == 'pendiente' %}
+                                <!-- Marcar pagado: sin icono -->
                                 <a href="#" onclick="confirmarPago(event, {{ p.id_pedido }}, '{{ p.cliente_nombre }}')"
-                                    class="flex items-center justify-center w-8 h-8 rounded-lg text-white transition-all duration-200 hover:scale-110 hover:shadow-md"
+                                    class="px-3 py-1.5 rounded-lg text-white text-xs font-semibold transition-all duration-200 hover:brightness-110"
                                     style="background-color:#48bb78;" title="Marcar como pagado">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
+                                    Pagado
                                 </a>
+                                <!-- Cancelar: sin icono -->
                                 <a href="#"
                                     onclick="confirmarCancelacion(event, {{ p.id_pedido }}, '{{ p.cliente_nombre }}')"
-                                    class="flex items-center justify-center w-8 h-8 rounded-lg text-white transition-all duration-200 hover:scale-110 hover:shadow-md"
+                                    class="px-3 py-1.5 rounded-lg text-white text-xs font-semibold transition-all duration-200 hover:brightness-110"
                                     style="background-color:#e53e3e;" title="Cancelar pedido">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                                        viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                                    </svg>
+                                    Cancelar
                                 </a>
                                 {% endif %}
                             </div>
@@ -178,13 +166,14 @@
 
 </div>
 
+<!-- ═══════════════ MODAL NUEVO PEDIDO ═══════════════ -->
 <div id="modalRegistro" tabindex="-1" class="hidden fixed inset-0 z-50 overflow-y-auto"
     style="background-color:rgba(0,0,0,0.3);">
     <div class="flex min-h-full items-start justify-center p-4 pt-6">
         <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full mx-auto my-8 overflow-hidden">
             <div class="flex justify-between items-center px-6 py-4" style="background-color:#1a1a1a;">
                 <h3 class="text-base font-bold text-white tracking-wide">NUEVO PEDIDO</h3>
-                <button type="button" onclick="cerrarModal('modalRegistro')"
+                <button type="button" onclick="cerrarModalRegistro()"
                     class="text-white hover:text-gray-300 transition">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -192,9 +181,15 @@
                 </button>
             </div>
             <div class="p-6">
-                <form method="POST" action="{{ url_for('pedidos.registrar') }}" id="pedidoForm">
+                <form method="POST" action="{{ url_for('pedidos.registrar') }}" id="pedidoForm"
+                    onsubmit="return validarPedido(event)">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                     <input type="hidden" name="productos" id="productosInput">
+
+                    <!-- Alerta productos vacíos -->
+                    <div id="alertaProductosVacios" class="hidden mb-4 px-4 py-3 rounded-xl text-sm font-semibold bg-red-100 text-red-700 border border-red-300">
+                        Debes agregar al menos un producto al pedido.
+                    </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-semibold text-gray-700 mb-2">Cliente <span
@@ -228,7 +223,7 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="button" onclick="cerrarModal('modalRegistro')"
+                        <button type="button" onclick="cerrarModalRegistro()"
                             class="flex-1 px-4 py-2 rounded-lg border border-gray-300 text-gray-700 font-semibold hover:bg-gray-100 transition">
                             Cancelar
                         </button>
@@ -244,6 +239,7 @@
     </div>
 </div>
 
+<!-- ═══════════════ MODAL VER DETALLE (sin sección de pagos) ═══════════════ -->
 <div id="modalVer" tabindex="-1" class="hidden fixed inset-0 z-50 flex items-center justify-center overflow-y-auto"
     style="background-color:rgba(0,0,0,0.3);">
     <div class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-4 my-8 overflow-hidden">
@@ -269,6 +265,7 @@
     </div>
 </div>
 
+<!-- ═══════════════ MODAL SELECCIONAR PRODUCTO (mejorado con imagen) ═══════════════ -->
 <div id="modalProductos" tabindex="-1" class="hidden fixed inset-0 z-50 overflow-y-auto"
     style="background-color:rgba(0,0,0,0.3);">
     <div class="flex min-h-full items-start justify-center p-4 pt-6">
@@ -287,26 +284,41 @@
                     <input type="text" id="buscarProducto" placeholder="Buscar producto..."
                         class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent transition">
                 </div>
-                <div class="max-h-96 overflow-y-auto space-y-2">
+                <div class="max-h-96 overflow-y-auto space-y-2 pr-1">
                     {% for p in productos %}
-                    <div class="producto-item border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors cursor-pointer"
-                        data-id="{{ p.id_producto }}" data-nombre="{{ p.nombre }}" data-precio="{{ p.precio }}"
+                    <div class="producto-item border border-gray-200 rounded-xl p-3 hover:border-red-300 hover:bg-red-50 transition-all cursor-pointer"
+                        data-id="{{ p.id_producto }}"
+                        data-nombre="{{ p.nombre }}"
+                        data-precio="{{ p.precio }}"
                         data-stock="{{ p.stock }}">
-                        <div class="flex justify-between items-center">
-                            <div>
-                                <h4 class="font-semibold text-gray-800">{{ p.nombre }}</h4>
-                                <div class="flex gap-3 text-xs text-gray-500 mt-1">
-                                    <span>💰 ${{ "%.2f"|format(p.precio) }}</span>
-                                    <span>📦 Stock: {{ p.stock }}</span>
+                        <div class="flex items-center gap-3">
+                            <!-- Imagen del producto -->
+                            <div class="flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border border-gray-200 bg-gray-50 flex items-center justify-center">
+                                {% if p.imagen %}
+                                <img src="data:image/jpeg;base64,{{ p.imagen }}"
+                                     alt="{{ p.nombre }}"
+                                     class="w-full h-full object-contain">
+                                {% else %}
+                                <span class="text-xs font-black text-gray-400">BL</span>
+                                {% endif %}
+                            </div>
+                            <!-- Info -->
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-gray-800 text-sm truncate">{{ p.nombre }}</h4>
+                                <div class="flex gap-3 text-xs mt-1">
+                                    <span class="font-bold" style="color:#ef4444;">${{ "%.2f"|format(p.precio) }}</span>
+                                    <span class="text-gray-500">Stock: <span class="font-semibold text-gray-700">{{ p.stock }}</span></span>
                                 </div>
                             </div>
-                            <div class="flex items-center gap-2">
+                            <!-- Cantidad + botón -->
+                            <div class="flex items-center gap-2 flex-shrink-0">
                                 <input type="number" id="cantidad_{{ p.id_producto }}" min="1" max="{{ p.stock }}"
                                     value="1"
-                                    class="w-20 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center focus:outline-none focus:ring-2 focus:ring-red-500">
+                                    class="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm text-center focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    onclick="event.stopPropagation()">
                                 <button type="button"
-                                    onclick="agregarProducto(this.parentElement.parentElement.parentElement)"
-                                    class="px-3 py-1 rounded-lg text-white text-xs font-semibold transition hover:brightness-110"
+                                    onclick="agregarProducto(this.closest('.producto-item'))"
+                                    class="px-3 py-1.5 rounded-lg text-white text-xs font-semibold transition hover:brightness-110 whitespace-nowrap"
                                     style="background-color:#ef4444;">
                                     Agregar
                                 </button>
@@ -322,6 +334,29 @@
     </div>
 </div>
 
+<!-- ═══════════════ MODAL ALERTA STOCK ═══════════════ -->
+<div id="modalAlertaStock" class="hidden fixed inset-0 z-[60] flex items-center justify-center"
+    style="background-color:rgba(0,0,0,0.4);">
+    <div class="bg-white rounded-2xl shadow-xl p-5 w-80 text-center">
+        <div class="flex justify-center mb-3">
+            <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
+                <svg class="w-6 h-6 text-yellow-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+                </svg>
+            </div>
+        </div>
+        <h3 class="text-base font-bold text-gray-800 mb-1">Stock insuficiente</h3>
+        <p id="alertaStockMensaje" class="text-sm text-gray-500 mb-5"></p>
+        <button type="button" onclick="cerrarModal('modalAlertaStock')"
+            class="w-full px-4 py-2 rounded-lg text-white font-semibold transition hover:brightness-110"
+            style="background-color:#ef4444;">
+            Entendido
+        </button>
+    </div>
+</div>
+
+<!-- ═══════════════ MODAL CONFIRMAR CANCELACIÓN ═══════════════ -->
 <div id="modalConfirmCancel" class="hidden fixed inset-0 z-50 flex items-center justify-center"
     style="background-color:rgba(0,0,0,0.3);">
     <div class="bg-white rounded-2xl shadow-xl p-5 w-72 text-center">
@@ -338,17 +373,18 @@
         <div class="flex gap-2">
             <button type="button" onclick="cerrarModal('modalConfirmCancel')"
                 class="flex-1 px-3 py-2 rounded-lg border border-gray-300 text-gray-600 text-sm font-semibold hover:bg-gray-100 transition">
-                Cancelar
+                Volver
             </button>
             <a id="confirmCancelBtn" href="#"
                 class="flex-1 px-3 py-2 rounded-lg text-white text-sm font-semibold transition hover:brightness-110 text-center"
                 style="background-color:#ef4444;">
-                Confirmar
+                Cancelar pedido
             </a>
         </div>
     </div>
 </div>
 
+<!-- ═══════════════ MODAL CONFIRMAR PAGO ═══════════════ -->
 <div id="modalConfirmPago" class="hidden fixed inset-0 z-50 flex items-center justify-center"
     style="background-color:rgba(0,0,0,0.3);">
     <div class="bg-white rounded-2xl shadow-xl p-5 w-72 text-center">
@@ -380,6 +416,7 @@
 <script>
     let productosSeleccionados = [];
 
+    // ── Helpers modales ──────────────────────────────────────────────────────
     function abrirModal(id) {
         document.getElementById(id).classList.remove('hidden');
     }
@@ -388,54 +425,74 @@
         document.getElementById(id).classList.add('hidden');
     }
 
-    document.getElementById('modalConfirm').addEventListener('click', e => {
-        if (e.target === document.getElementById('modalConfirm')) cerrarModal('modalConfirm');
-    });
+    function cerrarModalRegistro() {
+        productosSeleccionados = [];
+        actualizarListaProductos();
+        document.getElementById('alertaProductosVacios').classList.add('hidden');
+        cerrarModal('modalRegistro');
+    }
 
+    // Cerrar modales con Escape
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') {
-            ['modalConfirmCancel', 'modalConfirmPago', 'modalRegistro', 'modalVer', 'modalProductos'].forEach(cerrarModal);
+            ['modalConfirmCancel', 'modalConfirmPago', 'modalRegistro', 'modalVer', 'modalProductos', 'modalAlertaStock'].forEach(cerrarModal);
         }
     });
 
+    // Cerrar al click en backdrop
     document.getElementById('modalConfirmCancel').addEventListener('click', e => {
         if (e.target === document.getElementById('modalConfirmCancel')) cerrarModal('modalConfirmCancel');
     });
-
     document.getElementById('modalConfirmPago').addEventListener('click', e => {
         if (e.target === document.getElementById('modalConfirmPago')) cerrarModal('modalConfirmPago');
     });
+    document.getElementById('modalRegistro').addEventListener('click', function (e) {
+        if (e.target === this) cerrarModalRegistro();
+    });
+    document.getElementById('modalProductos').addEventListener('click', e => {
+        if (e.target === document.getElementById('modalProductos')) cerrarModal('modalProductos');
+    });
+    document.getElementById('modalAlertaStock').addEventListener('click', e => {
+        if (e.target === document.getElementById('modalAlertaStock')) cerrarModal('modalAlertaStock');
+    });
 
+    // ── Búsqueda en lista de productos ──────────────────────────────────────
     document.getElementById('buscarProducto')?.addEventListener('input', function () {
         const search = this.value.toLowerCase();
-        const items = document.querySelectorAll('#modalProductos .producto-item');
-        items.forEach(item => {
-            const nombre = item.querySelector('h4')?.textContent.toLowerCase() || '';
+        document.querySelectorAll('#modalProductos .producto-item').forEach(item => {
+            const nombre = item.dataset.nombre?.toLowerCase() || '';
             item.style.display = nombre.includes(search) ? '' : 'none';
         });
     });
 
-    function agregarProducto(element) {
-        const item = element.closest('.producto-item');
-        const id = parseInt(item.dataset.id);
-        const nombre = item.dataset.nombre;
-        const precio = parseFloat(item.dataset.precio);
+    // ── Alerta de stock estilizada ───────────────────────────────────────────
+    function mostrarAlertaStock(mensaje) {
+        document.getElementById('alertaStockMensaje').textContent = mensaje;
+        abrirModal('modalAlertaStock');
+    }
+
+    // ── Agregar producto al pedido ───────────────────────────────────────────
+    function agregarProducto(item) {
+        const id       = parseInt(item.dataset.id);
+        const nombre   = item.dataset.nombre;
+        const precio   = parseFloat(item.dataset.precio);
         const stockMax = parseInt(item.dataset.stock);
         const cantidadInput = document.getElementById(`cantidad_${id}`);
         let cantidad = parseInt(cantidadInput.value);
 
         if (isNaN(cantidad) || cantidad < 1) cantidad = 1;
+
         if (cantidad > stockMax) {
-            alert(`Stock máximo disponible: ${stockMax}`);
-            cantidad = stockMax;
+            mostrarAlertaStock(`Stock máximo disponible para "${nombre}": ${stockMax} unidades.`);
             cantidadInput.value = stockMax;
+            return;
         }
 
         const existe = productosSeleccionados.findIndex(p => p.id_producto === id);
         if (existe !== -1) {
             const nuevaCantidad = productosSeleccionados[existe].cantidad + cantidad;
             if (nuevaCantidad > stockMax) {
-                alert(`No puedes agregar más. Stock máximo: ${stockMax}`);
+                mostrarAlertaStock(`No puedes agregar más de "${nombre}". Stock máximo: ${stockMax} unidades.`);
                 return;
             }
             productosSeleccionados[existe].cantidad = nuevaCantidad;
@@ -453,6 +510,7 @@
         cerrarModal('modalProductos');
     }
 
+    // ── Actualizar lista visual de productos seleccionados ───────────────────
     function actualizarListaProductos() {
         const container = document.getElementById('productosSeleccionados');
 
@@ -470,32 +528,35 @@
             const subtotal = item.cantidad * item.precio;
             total += subtotal;
             html += `
-        <div class="flex justify-between items-center bg-gray-50 rounded-lg p-2 text-sm">
-          <div class="flex-1">
-            <span class="font-semibold">${item.nombre}</span>
-            <div class="text-xs text-gray-500">$${item.precio.toFixed(2)} c/u</div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="cambiarCantidad(${idx}, -1)" class="w-6 h-6 rounded bg-gray-200 hover:bg-gray-300">-</button>
-            <span class="w-8 text-center">${item.cantidad}</span>
-            <button type="button" onclick="cambiarCantidad(${idx}, 1)" class="w-6 h-6 rounded bg-gray-200 hover:bg-gray-300">+</button>
-            <span class="font-semibold w-16 text-right">$${subtotal.toFixed(2)}</span>
-            <button type="button" onclick="eliminarProducto(${idx})" class="text-red-500 hover:text-red-700 ml-1">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
-        </div>
-      `;
+                <div class="flex justify-between items-center bg-gray-50 rounded-lg p-2 text-sm">
+                    <div class="flex-1 min-w-0 mr-2">
+                        <span class="font-semibold text-gray-800 truncate block">${item.nombre}</span>
+                        <div class="text-xs text-gray-500">$${item.precio.toFixed(2)} c/u</div>
+                    </div>
+                    <div class="flex items-center gap-1.5 flex-shrink-0">
+                        <button type="button" onclick="cambiarCantidad(${idx}, -1)"
+                            class="w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 font-bold text-gray-700 text-sm leading-none">−</button>
+                        <span class="w-7 text-center font-semibold">${item.cantidad}</span>
+                        <button type="button" onclick="cambiarCantidad(${idx}, 1)"
+                            class="w-6 h-6 rounded bg-gray-200 hover:bg-gray-300 font-bold text-gray-700 text-sm leading-none">+</button>
+                        <span class="font-bold w-16 text-right text-gray-800">$${subtotal.toFixed(2)}</span>
+                        <button type="button" onclick="eliminarProducto(${idx})"
+                            class="ml-1 text-red-400 hover:text-red-600 transition"
+                            title="Eliminar">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            `;
         });
 
         container.innerHTML = html;
         document.getElementById('totalPedido').innerText = `$${total.toFixed(2)}`;
-        document.getElementById('productosInput').value = JSON.stringify(productosSeleccionados.map(p => ({
-            id_producto: p.id_producto,
-            cantidad: p.cantidad
-        })));
+        document.getElementById('productosInput').value = JSON.stringify(
+            productosSeleccionados.map(p => ({ id_producto: p.id_producto, cantidad: p.cantidad }))
+        );
     }
 
     function cambiarCantidad(idx, delta) {
@@ -504,7 +565,7 @@
 
         if (nuevaCantidad < 1) nuevaCantidad = 1;
         if (nuevaCantidad > item.stock_max) {
-            alert(`Stock máximo disponible: ${item.stock_max}`);
+            mostrarAlertaStock(`Stock máximo disponible para "${item.nombre}": ${item.stock_max} unidades.`);
             nuevaCantidad = item.stock_max;
         }
 
@@ -517,109 +578,119 @@
         actualizarListaProductos();
     }
 
+    // ── Validación antes de enviar el formulario ─────────────────────────────
+    function validarPedido(e) {
+        const alertaEl = document.getElementById('alertaProductosVacios');
+        if (productosSeleccionados.length === 0) {
+            e.preventDefault();
+            alertaEl.classList.remove('hidden');
+            alertaEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            return false;
+        }
+        alertaEl.classList.add('hidden');
+        return true;
+    }
+
+    // ── Modal Ver detalle (sin sección de pagos) ─────────────────────────────
     function abrirVer(row) {
         const id = row.dataset.id;
+        document.getElementById('detallePedido').innerHTML = '<div class="text-center text-gray-400">Cargando...</div>';
+        abrirModal('modalVer');
+
         fetch(`/pedidos/ver/${id}`)
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    document.getElementById('detallePedido').innerHTML = '<div class="text-center text-red-500">Error al cargar el detalle</div>';
-                } else {
-                    let html = `
-            <div class="border-b border-gray-200 pb-2">
-              <span class="text-gray-500">Fecha:</span>
-              <span class="font-semibold">${data.pedido.fecha}</span>
-            </div>
-            <div class="border-b border-gray-200 pb-2">
-              <span class="text-gray-500">Estado:</span>
-              <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold
-                ${data.pedido.estado === 'pagado' ? 'bg-green-100 text-green-700' :
-                            (data.pedido.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-600')}">
-                ${data.pedido.estado.charAt(0).toUpperCase() + data.pedido.estado.slice(1)}
-              </span>
-            </div>
-            <div class="border-b border-gray-200 pb-2">
-              <span class="text-gray-500">Total:</span>
-              <span class="font-bold" style="color:#ef4444;">$${parseFloat(data.pedido.total).toFixed(2)}</span>
-            </div>
-            <div class="border-b border-gray-200 pb-2">
-              <span class="text-gray-500">Cliente:</span>
-              <span class="font-semibold">${data.pedido.nombre}</span>
-            </div>
-            <div class="border-b border-gray-200 pb-2">
-              <span class="text-gray-500">Teléfono:</span>
-              <span>${data.pedido.telefono || '—'}</span>
-            </div>
-            <div class="border-b border-gray-200 pb-2">
-              <span class="text-gray-500">Correo:</span>
-              <span>${data.pedido.correo || '—'}</span>
-            </div>
-            <div class="border-b border-gray-200 pb-2">
-              <span class="text-gray-500">Dirección:</span>
-              <span>${data.pedido.direccion || '—'}</span>
-            </div>
-            <div class="pt-2">
-              <span class="font-semibold text-gray-700">Productos:</span>
-              <div class="mt-1 space-y-1">
-          `;
-                    data.detalles.forEach(d => {
-                        html += `<div class="flex justify-between text-sm">
-                       <span>${d.nombre} x${d.cantidad}</span>
-                       <span class="font-semibold">$${parseFloat(d.subtotal).toFixed(2)}</span>
-                     </div>`;
-                    });
-                    html += `
-              </div>
-            </div>
-            <div class="pt-2 border-t border-gray-200 mt-2">
-              <div class="flex justify-between">
-                <span class="font-semibold">Total pagado:</span>
-                <span class="text-green-600 font-semibold">$${data.total_pagado.toFixed(2)}</span>
-              </div>
-              <div class="flex justify-between">
-                <span class="font-semibold">Saldo pendiente:</span>
-                <span class="${data.saldo_pendiente > 0 ? 'text-red-600' : 'text-green-600'} font-semibold">$${data.saldo_pendiente.toFixed(2)}</span>
-              </div>
-            </div>
-          `;
-                    document.getElementById('detallePedido').innerHTML = html;
+                    document.getElementById('detallePedido').innerHTML =
+                        '<div class="text-center text-red-500">Error al cargar el detalle</div>';
+                    return;
                 }
-                abrirModal('modalVer');
+
+                let html = `
+                    <div class="flex justify-between border-b border-gray-200 pb-2">
+                        <span class="text-gray-500">Fecha:</span>
+                        <span class="font-semibold">${data.pedido.fecha}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-200 pb-2">
+                        <span class="text-gray-500">Estado:</span>
+                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold
+                            ${data.pedido.estado === 'pagado' ? 'bg-green-100 text-green-700' :
+                              data.pedido.estado === 'pendiente' ? 'bg-yellow-100 text-yellow-700' :
+                              'bg-red-100 text-red-600'}">
+                            ${data.pedido.estado.charAt(0).toUpperCase() + data.pedido.estado.slice(1)}
+                        </span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-200 pb-2">
+                        <span class="text-gray-500">Total:</span>
+                        <span class="font-bold" style="color:#ef4444;">$${parseFloat(data.pedido.total).toFixed(2)}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-200 pb-2">
+                        <span class="text-gray-500">Cliente:</span>
+                        <span class="font-semibold">${data.pedido.nombre}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-200 pb-2">
+                        <span class="text-gray-500">Teléfono:</span>
+                        <span>${data.pedido.telefono || '—'}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-200 pb-2">
+                        <span class="text-gray-500">Correo:</span>
+                        <span>${data.pedido.correo || '—'}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-gray-200 pb-2">
+                        <span class="text-gray-500">Dirección:</span>
+                        <span class="text-right max-w-[55%]">${data.pedido.direccion || '—'}</span>
+                    </div>
+                    <div class="pt-2">
+                        <span class="font-semibold text-gray-700">Productos:</span>
+                        <div class="mt-2 space-y-1">
+                `;
+
+                data.detalles.forEach(d => {
+                    html += `
+                        <div class="flex justify-between text-sm py-1 border-b border-gray-100 last:border-0">
+                            <span class="text-gray-700">${d.nombre} <span class="text-gray-400">×${d.cantidad}</span></span>
+                            <span class="font-semibold">$${parseFloat(d.subtotal).toFixed(2)}</span>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+
+                document.getElementById('detallePedido').innerHTML = html;
             })
-            .catch(error => {
-                console.error('Error:', error);
-                document.getElementById('detallePedido').innerHTML = '<div class="text-center text-red-500">Error al cargar el detalle</div>';
-                abrirModal('modalVer');
+            .catch(() => {
+                document.getElementById('detallePedido').innerHTML =
+                    '<div class="text-center text-red-500">Error al cargar el detalle</div>';
             });
     }
 
+    // ── Confirmaciones ───────────────────────────────────────────────────────
     function confirmarPago(e, id, nombre) {
         e.preventDefault();
-        document.getElementById('confirmPagoMensaje').textContent = `¿Marcar como pagado el pedido de "${nombre}"? Se registrará el pago completo.`;
+        document.getElementById('confirmPagoMensaje').textContent =
+            `¿Marcar como pagado el pedido de "${nombre}"? Se registrará el pago completo en efectivo.`;
         document.getElementById('confirmPagoBtn').href = `/pedidos/marcarPagado/${id}`;
         abrirModal('modalConfirmPago');
     }
 
     function confirmarCancelacion(e, id, nombre) {
         e.preventDefault();
-        document.getElementById('confirmCancelMensaje').textContent = `¿Estás seguro de cancelar el pedido de "${nombre}"? Se devolverá el stock de los productos.`;
+        document.getElementById('confirmCancelMensaje').textContent =
+            `¿Estás seguro de cancelar el pedido de "${nombre}"? Se devolverá el stock de los productos.`;
         document.getElementById('confirmCancelBtn').href = `/pedidos/cambiarEstado/${id}/pendiente`;
         abrirModal('modalConfirmCancel');
     }
 
+    // ── Auto-ocultar flash messages ──────────────────────────────────────────
     document.querySelectorAll('#flash-messages > div').forEach(function (msg) {
         setTimeout(function () {
             msg.style.transition = 'opacity 0.5s ease';
             msg.style.opacity = '0';
             setTimeout(function () { msg.remove(); }, 500);
         }, 5000);
-    });
-
-    document.getElementById('modalRegistro').addEventListener('click', function (e) {
-        if (e.target === this) {
-            productosSeleccionados = [];
-            actualizarListaProductos();
-        }
     });
 </script>
 
